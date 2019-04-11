@@ -149,7 +149,9 @@ namespace AlgorithmsDataStructures2
             // ваш код перемещения узла вместе с его поддеревом -- 
             // в качестве дочернего для узла NewParent
             OriginalNode.Parent.Children.Remove(OriginalNode);
-            NewParent.Children.Add(OriginalNode);
+            this.AddChild(NewParent, OriginalNode);
+            count--;
+
         }
 
         public int Count()
