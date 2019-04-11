@@ -166,7 +166,7 @@ namespace AlgorithmsDataStructures2
             Stack<SimpleTreeNode<T>> stack = new Stack<SimpleTreeNode<T>>();
             int leafs = 0;
             stack.Push(current);
-
+            if (count == 1) return 0;
             while (current != null && stack.Count != 0)
             {
                 if (current.Children != null)
