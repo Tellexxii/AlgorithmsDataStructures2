@@ -162,26 +162,34 @@ namespace AlgorithmsDataStructures2
 
         public int LeafCount()
         {
-            SimpleTreeNode<T> current = Root;
-            Stack<SimpleTreeNode<T>> stack = new Stack<SimpleTreeNode<T>>();
-            int leafs = 0;
-            stack.Push(current);
+            //SimpleTreeNode<T> current = Root;
+            //Stack<SimpleTreeNode<T>> stack = new Stack<SimpleTreeNode<T>>();
+            //int leafs = 0;
+            //stack.Push(current);
             
-            while (current != null && stack.Count != 0)
+            //while (current != null && stack.Count != 0)
+            //{
+            //    if (current.Children != null)
+            //    {
+            //        List<SimpleTreeNode<T>> children = current.Children;
+            //        foreach (var child in children)
+            //        {
+            //            stack.Push(child);
+            //        }
+            //    }
+            //    else
+            //    {
+            //        leafs++;
+            //    }
+            //    current = stack.Pop();
+            //}
+
+            //return leafs;
+            List<SimpleTreeNode<T>> list = this.GetAllNodes();
+            int leafs = 0;
+            foreach (var node in list)
             {
-                if (current.Children != null)
-                {
-                    List<SimpleTreeNode<T>> children = current.Children;
-                    foreach (var child in children)
-                    {
-                        stack.Push(child);
-                    }
-                }
-                else
-                {
-                    leafs++;
-                }
-                current = stack.Pop();
+                if (node.Children == null || node.Children.Count == 0) leafs++;
             }
 
             return leafs;
