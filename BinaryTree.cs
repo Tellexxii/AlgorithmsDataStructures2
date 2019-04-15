@@ -135,6 +135,7 @@ namespace AlgorithmsDataStructures2
             if (Root == null)
             {
                 Root = node;
+                count++;
                 return true;
             }
             if (node.NodeKey == key) return false;
@@ -149,6 +150,7 @@ namespace AlgorithmsDataStructures2
                     node.RightChild = new BSTNode<T>(key, val, node);
                 }
             }
+            count++;
             return true;
         }
 
