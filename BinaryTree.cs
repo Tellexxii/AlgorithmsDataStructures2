@@ -65,7 +65,8 @@ namespace AlgorithmsDataStructures2
             // ищем в дереве узел и сопутствующую информацию по ключу
             BSTNode<T> node = Root;
 
-            if (node == null || count == 1) return null;
+            //if (node == null || count == 1) return null;
+            if (node == null) return null;
 
             while (node != null)
             {
@@ -103,33 +104,52 @@ namespace AlgorithmsDataStructures2
                     count++;
                     return true;
                 }
-                Add(node.LeftChild, key, value);
+                else
+                {
+                    Add(node.LeftChild, key, value);
+                }
             }
             else if(result > 0)
             {
 
                 if (node.RightChild == null)
                 {
-                    node.RightChild = new BSTNode<T>(key, value,node);
+                    node.RightChild = new BSTNode<T>(key, value, node);
                     count++;
                     return true;
                 }
-                Add(node.RightChild, key, value);
+                else
+                {
+                    Add(node.RightChild, key, value);
+                }
             }
-            
             return false;
+            
         }
         public bool AddKeyValue(int key, T val)
         {
             // добавляем ключ-значение в дерево
-            BSTNode<T> node = new BSTNode<T>(key,val,null);
+            //BSTNode<T> node = new BSTNode<T>(key,val,null);
+            BSTFind<T> find = this.FindNodeByKey(key);
+            var node = find.Node;
             if (Root == null)
             {
                 Root = node;
                 return true;
             }
-
-            return Add(Root, key, val);
+            if (node.NodeKey == key) return false;
+            else
+            {
+                if (node.NodeKey > key)
+                {
+                    node.LeftChild = new BSTNode<T>(key, val, node);
+                }
+                else
+                {
+                    node.RightChild = new BSTNode<T>(key, val, node);
+                }
+            }
+            return true;
         }
 
         public BSTNode<T> FinMinMax(BSTNode<T> FromNode, bool FindMax)
@@ -235,6 +255,7 @@ namespace AlgorithmsDataStructures2
                     }
                 }
             }
+            count--;
             return true;
         }
 
