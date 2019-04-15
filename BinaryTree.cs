@@ -19,11 +19,11 @@ namespace AlgorithmsDataStructures2
             LeftChild = null;
             RightChild = null;
         }
-        public override string ToString()
-        {
-            string parent = Parent == null ? "null" : Parent.NodeKey.ToString();
-            return $"key:{NodeKey},Parent:{parent}";
-        }
+        //public override string ToString()
+        //{
+        //    string parent = Parent == null ? "null" : Parent.NodeKey.ToString();
+        //    return $"key:{NodeKey},Parent:{parent}";
+        //}
     }
 
     // промежуточный результат поиска
