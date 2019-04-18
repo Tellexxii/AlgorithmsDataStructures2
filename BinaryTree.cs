@@ -173,72 +173,72 @@ namespace AlgorithmsDataStructures2
 
         public bool DeleteNodeByKey(int key)
         {
-            BSTFind<T> foundNode = FindNodeByKey(key);
-            if (foundNode.NodeHasKey)
+            BSTFind<T> found = FindNodeByKey(key);
+            if (found.NodeHasKey)
             {
                 // удаляемый узел не имеет потомков
-                if (foundNode.Node.LeftChild == null && foundNode.Node.RightChild == null)
+                if (found.Node.LeftChild == null && found.Node.RightChild == null)
                 {
-                    if (foundNode.Node.Parent.LeftChild != null && foundNode.Node.Parent.LeftChild.Equals(foundNode.Node))
-                        foundNode.Node.Parent.LeftChild = null;
-                    else if (foundNode.Node.Parent.RightChild != null && foundNode.Node.Parent.RightChild.Equals(foundNode.Node))
-                        foundNode.Node.Parent.RightChild = null;
+                    if (found.Node.Parent.LeftChild != null && found.Node.Parent.LeftChild.Equals(found.Node))
+                        found.Node.Parent.LeftChild = null;
+                    else if (found.Node.Parent.RightChild != null && found.Node.Parent.RightChild.Equals(found.Node))
+                        found.Node.Parent.RightChild = null;
                 }
                 // удаляемый узел имеет только одного потомка
-                else if (foundNode.Node.LeftChild == null ^ foundNode.Node.RightChild == null)
+                else if (found.Node.LeftChild == null ^ found.Node.RightChild == null)
                 {
-                    if (foundNode.Node.LeftChild != null) // левый потомок привязываем к родителю удаленного узла
+                    if (found.Node.LeftChild != null)
                     {
-                        if (foundNode.Node.Parent.LeftChild != null && foundNode.Node.Parent.LeftChild.Equals(foundNode.Node))
-                            foundNode.Node.Parent.LeftChild = foundNode.Node.LeftChild;
+                        if (found.Node.Parent.LeftChild != null && found.Node.Parent.LeftChild.Equals(found.Node))
+                            found.Node.Parent.LeftChild = found.Node.LeftChild;
                         else
-                            foundNode.Node.Parent.RightChild = foundNode.Node.LeftChild;
+                            found.Node.Parent.RightChild = found.Node.LeftChild;
 
-                        foundNode.Node.LeftChild.Parent = foundNode.Node.Parent;
+                        found.Node.LeftChild.Parent = found.Node.Parent;
                     }
                     else // правый потомок привязываем к родителю удаленного узла
                     {
-                        if (foundNode.Node.Parent.LeftChild != null && foundNode.Node.Parent.LeftChild.Equals(foundNode.Node))
-                            foundNode.Node.Parent.LeftChild = foundNode.Node.RightChild;
+                        if (found.Node.Parent.LeftChild != null && found.Node.Parent.LeftChild.Equals(found.Node))
+                            found.Node.Parent.LeftChild = found.Node.RightChild;
                         else
-                            foundNode.Node.Parent.RightChild = foundNode.Node.RightChild;
+                            found.Node.Parent.RightChild = found.Node.RightChild;
 
-                        foundNode.Node.RightChild.Parent = foundNode.Node.Parent;
+                        found.Node.RightChild.Parent = found.Node.Parent;
                     }
                 }
                 // удаляемый узел имеет двух потомков
                 else
                 {
-                    BSTNode<T> successorNode = FinMinMax(foundNode.Node.RightChild, false); // наименьший потомок, который больше удаляемого узла
+                    BSTNode<T> successorNode = FinMinMax(found.Node.RightChild, false); 
 
-                    if (successorNode.RightChild != null) // если наименьший потомок не является листом
+                    if (successorNode.RightChild != null) 
                     {
-                        successorNode.Parent.LeftChild = successorNode.RightChild; // передаем его правого потомка левым узлом родителю
-                        successorNode.RightChild.Parent = successorNode.Parent; // правому потомку назначаем родителя
+                        successorNode.Parent.LeftChild = successorNode.RightChild; 
+                        successorNode.RightChild.Parent = successorNode.Parent; 
                     }
                     else
                     {
                         if (successorNode.Parent.LeftChild == successorNode)
-                            successorNode.Parent.LeftChild = null; // удаляем левый лист 
+                            successorNode.Parent.LeftChild = null; 
                         else
-                            successorNode.Parent.RightChild = null; // удаляем правый лист 
+                            successorNode.Parent.RightChild = null;
                     }
-                    // преемник замещает удаленный узел
-                    if (foundNode.Node.Parent.RightChild == foundNode.Node)
-                        foundNode.Node.Parent.RightChild = successorNode;
+                    
+                    if (found.Node.Parent.RightChild == found.Node)
+                        found.Node.Parent.RightChild = successorNode;
                     else
-                        foundNode.Node.Parent.LeftChild = successorNode;
+                        found.Node.Parent.LeftChild = successorNode;
 
-                    successorNode.Parent = foundNode.Node.Parent; // новый родитель для узла-преемника
+                    successorNode.Parent = found.Node.Parent; 
 
-                    successorNode.LeftChild = foundNode.Node.LeftChild; // левый потомок удаленного узла становится потомком узла-преемника
-                    successorNode.RightChild = foundNode.Node.RightChild; // правый потомок удаленного узла становится потомком узла-преемника
+                    successorNode.LeftChild = found.Node.LeftChild; 
+                    successorNode.RightChild = found.Node.RightChild; 
 
-                    // связать потомков удаленного узла с новым родителем
-                    if (foundNode.Node.RightChild != null)
-                        foundNode.Node.RightChild.Parent = successorNode;
-                    if (foundNode.Node.LeftChild != null)
-                        foundNode.Node.LeftChild.Parent = successorNode;
+                    
+                    if (found.Node.RightChild != null)
+                        found.Node.RightChild.Parent = successorNode;
+                    if (found.Node.LeftChild != null)
+                        found.Node.LeftChild.Parent = successorNode;
                 }
                 count--;
                 return true;
