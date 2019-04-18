@@ -65,7 +65,6 @@ namespace AlgorithmsDataStructures2
             // ищем в дереве узел и сопутствующую информацию по ключу
             BSTNode<T> node = Root;
 
-            //if (node == null || count == 1) return null;
             if (node == null) return null;
 
             while (node != null)
