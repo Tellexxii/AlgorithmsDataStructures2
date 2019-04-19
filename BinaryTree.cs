@@ -19,11 +19,7 @@ namespace AlgorithmsDataStructures2
             LeftChild = null;
             RightChild = null;
         }
-        //public override string ToString()
-        //{
-        //    string parent = Parent == null ? "null" : Parent.NodeKey.ToString();
-        //    return $"key:{NodeKey},Parent:{parent}";
-        //}
+        
     }
 
     // промежуточный результат поиска
@@ -92,39 +88,7 @@ namespace AlgorithmsDataStructures2
             }
             return null;
         }
-        private bool Add(BSTNode<T> node, int key, T value)
-        {
-            int result = key.CompareTo(node.NodeKey);
-            if (result < 0)
-            {
-                if (node.LeftChild == null)
-                {
-                    node.LeftChild = new BSTNode<T>(key, value, node);
-                    count++;
-                    return true;
-                }
-                else
-                {
-                    Add(node.LeftChild, key, value);
-                }
-            }
-            else if(result > 0)
-            {
-
-                if (node.RightChild == null)
-                {
-                    node.RightChild = new BSTNode<T>(key, value, node);
-                    count++;
-                    return true;
-                }
-                else
-                {
-                    Add(node.RightChild, key, value);
-                }
-            }
-            return false;
-            
-        }
+        
         public bool AddKeyValue(int key, T val)
         {
             // добавляем ключ-значение в дерево
@@ -176,7 +140,7 @@ namespace AlgorithmsDataStructures2
             BSTFind<T> found = FindNodeByKey(key);
             if (found.NodeHasKey)
             {
-                // удаляемый узел не имеет потомков
+                // No child
                 if (found.Node.LeftChild == null && found.Node.RightChild == null)
                 {
                     if (found.Node.Parent.LeftChild != null && found.Node.Parent.LeftChild.Equals(found.Node))
@@ -184,7 +148,7 @@ namespace AlgorithmsDataStructures2
                     else if (found.Node.Parent.RightChild != null && found.Node.Parent.RightChild.Equals(found.Node))
                         found.Node.Parent.RightChild = null;
                 }
-                // удаляемый узел имеет только одного потомка
+                // One child
                 else if (found.Node.LeftChild == null ^ found.Node.RightChild == null)
                 {
                     if (found.Node.LeftChild != null)
@@ -196,7 +160,7 @@ namespace AlgorithmsDataStructures2
 
                         found.Node.LeftChild.Parent = found.Node.Parent;
                     }
-                    else // правый потомок привязываем к родителю удаленного узла
+                    else // Bind chuld to parent
                     {
                         if (found.Node.Parent.LeftChild != null && found.Node.Parent.LeftChild.Equals(found.Node))
                             found.Node.Parent.LeftChild = found.Node.RightChild;
@@ -206,7 +170,7 @@ namespace AlgorithmsDataStructures2
                         found.Node.RightChild.Parent = found.Node.Parent;
                     }
                 }
-                // удаляемый узел имеет двух потомков
+                // 2 child
                 else
                 {
                     BSTNode<T> successorNode = FinMinMax(found.Node.RightChild, false); 
@@ -244,7 +208,119 @@ namespace AlgorithmsDataStructures2
                 return true;
             }
 
-            return false; // если узел не найден
+            return false; // Not found
+        }
+
+        public List<BSTNode<T>> WideAllNodes()
+        {
+            var list = new List<BSTNode<T>>();
+            var queue = new Queue<BSTNode<T>>();
+            var node = Root;
+
+            if (Root == null) return list;
+
+            queue.Enqueue(node);
+            while(queue.Count != 0)
+            {
+                node = queue.Dequeue();
+                list.Add(node);
+
+                if(node.LeftChild != null)
+                {
+                    queue.Enqueue(node.LeftChild);
+                }
+                if(node.RightChild != null)
+                {
+                    queue.Enqueue(node.RightChild);
+                }
+            }
+            return list;
+        }
+
+        public List<BSTNode<T>> DeepAllNodes(int method)
+        {
+            // method - 0(in -order), 1(post - order), 2(pre - order)
+            var list = new List<BSTNode<T>>();
+            var node = Root;
+
+            if (Root == null) return list;
+            switch (method)
+            {
+                case 0:
+                    list = this.Inorder(node);
+                    break;
+                case 1:
+                    list = this.Postorder(node);
+                    break;
+                case 2:
+                    list = this.Preorder(node);
+                    break;
+                default:
+                    break;
+            }
+            return list;
+        }
+        private List<BSTNode<T>> Inorder(BSTNode<T> node)
+        {
+            var list = new List<BSTNode<T>>();
+            if (node != null)
+            {
+                if (node.LeftChild != null)
+                {
+                    list.AddRange(Inorder(node.LeftChild));
+                }
+
+                list.Add(node);
+
+                if (node.RightChild != null)
+                {
+                    list.AddRange(Inorder(node.RightChild));
+                }
+
+
+            }
+            return list;
+        }
+        private List<BSTNode<T>> Postorder(BSTNode<T> node)
+        {
+            var list = new List<BSTNode<T>>();
+            if (node != null)
+            {
+                if (node.LeftChild != null)
+                {
+                    list.AddRange(Postorder(node.LeftChild));
+                }
+                
+                if (node.RightChild != null)
+                {
+                    list.AddRange(Postorder(node.RightChild));
+                }
+
+                list.Add(node);
+
+            }
+            return list;
+        }
+        private List<BSTNode<T>> Preorder(BSTNode<T> node)
+        {
+            var list = new List<BSTNode<T>>();
+            if (node != null)
+            {
+                list.Add(node);
+
+                if (node.LeftChild != null)
+                {
+                    list.AddRange(Preorder(node.LeftChild));
+                }
+
+                if (node.RightChild != null)
+                {
+                    list.AddRange(Preorder(node.RightChild));
+                }
+
+
+            }
+            return list;
         }
 
         public int Count()
