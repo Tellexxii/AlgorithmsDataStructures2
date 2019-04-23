@@ -10,61 +10,30 @@ namespace AlgorithmsDataStructures2
             Array.Sort(a);
 
             int depth = CheckDepth(a.Length);
-            
-            var list = new List<int>();
-            int middle = a.Length / 2;
-            list.Add(a[middle]);
-            //list.AddRange(Checking(a, 0, a.Length-1));
-            
-            var llist = new List<int>();
-            var rlist = new List<int>();
+            aBSTHelper tree = new aBSTHelper(depth); // Using array tree
 
-            llist.AddRange(Checking(a, 0, middle - 1));
-            rlist.AddRange(Checking(a, middle + 1, a.Length - 1));
+            AddToTree(a, tree, 0, a.Length - 1);
 
-            int index = 0;
-            while (index != llist.Count && index != rlist.Count)
+            var arr = new List<int>();
+            for (int i = 0; i < tree.Tree.Length; i++)
             {
-                list.Add(llist[index]);
-                //list.Add(rlist[index]);
-                index++;
+                if(tree.Tree[i] != null && tree.Tree[i] != -1)
+                {
+                    arr.Add(tree.Tree[i].Value);
+                }
             }
-            index = 0;
-            while (index != llist.Count && index != rlist.Count)
-            {
-                //list.Add(llist[index]);
-                list.Add(rlist[index]);
-                index++;
-            }
-
-
-            return list.ToArray();
+            return arr.ToArray();
         }
-        //public static List<int> Checking(int[] nums, int start, int end)
-        //{
-        //    if (start > end) return new List<int>();
-
-        //    int middle = start + (end - start) / 2;
-        //    var list = new List<int>();
-
-        //    list.Add(nums[middle]);
-        //    list.AddRange(Checking(nums, start, middle - 1));
-        //    list.AddRange(Checking(nums, middle + 1, end));
-
-        //    return list;
-        //}
-        public static List<int> Checking(int[] nums, int start, int end)
+        
+        public static void AddToTree(int[] nums,  aBSTHelper tree, int start, int end)
         {
-            if (start > end) return new List<int>();
+            if (start > end) return;
 
-            int middle = start + (end - start) / 2;
-            var list = new List<int>();
+            int middle = (start + end) / 2;
 
-            list.Add(nums[middle]);
-            list.AddRange(Checking(nums, start, middle - 1));
-            list.AddRange(Checking(nums, middle + 1, end));
-
-            return list;
+            tree.AddKey(nums[middle]);
+            AddToTree(nums, tree, start, middle - 1);
+            AddToTree(nums, tree, middle + 1, end);
         }
 
         public static int CheckDepth(int size)
@@ -80,5 +49,58 @@ namespace AlgorithmsDataStructures2
                 depth++;
             }
         }
+    }
+    public class aBSTHelper
+    {
+        public int?[] Tree; // массив ключей
+        int tree_size;
+        public aBSTHelper(int depth)
+        {
+            // правильно рассчитайте размер массива для дерева глубины depth:
+            tree_size = (int)Math.Pow(2, (Convert.ToDouble(depth + 1))) - 1;
+            Tree = new int?[tree_size];
+            for (int i = 0; i < tree_size; i++) Tree[i] = null;
+        }
+
+        public int? FindKeyIndex(int key)
+        {
+            // ищем в массиве индекс ключа
+            int i = 0;
+            for (; i < tree_size;)
+            {
+                if (Tree[i] != null)
+                {
+                    if (Tree[i] == key) return i;
+                    else
+                    {
+                        i = Tree[i] > key ? (2 * i) + 1 : (2 * i) + 2; // If greater, go left, Else go right
+                    }
+                }
+                else
+                {
+                    return -i;
+                }
+
+            }
+            return null; // не найден
+        }
+
+        public int AddKey(int key)
+        {
+            // добавляем ключ в массив
+            int? found = this.FindKeyIndex(key);
+            if (found <= 0)
+            {
+                Tree[(int)-found] = key;
+                return (int)-found;
+            }
+            else if (found > 0)
+            {
+                return (int)found;
+            }
+            return -1;
+            // индекс добавленного/существующего ключа или -1 если не удалось
+        }
+
     }
 }
