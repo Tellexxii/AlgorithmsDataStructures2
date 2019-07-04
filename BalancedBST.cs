@@ -3,103 +3,131 @@ using System.Collections.Generic;
 
 namespace AlgorithmsDataStructures2
 {
-    public static class BalancedBST
+    public class BSTNode
     {
-        public static int[] GenerateBBSTArray(int[] a)
+        public int NodeKey;         // ключ узла
+        public BSTNode Parent;      // родитель или null для корня
+        public BSTNode LeftChild;   // левый потомок
+        public BSTNode RightChild;  // правый потомок	
+        public int Level;           // глубина узла
+
+        public BSTNode(int key, BSTNode parent)
         {
-            Array.Sort(a);
-
-            int depth = CheckDepth(a.Length);
-            aBSTHelper tree = new aBSTHelper(depth); // Using array tree
-
-            AddToTree(a, tree, 0, a.Length - 1);
-
-            var arr = new List<int>();
-            for (int i = 0; i < tree.Tree.Length; i++)
-            {
-                if(tree.Tree[i] != null && tree.Tree[i] != -1)
-                {
-                    arr.Add(tree.Tree[i].Value);
-                }
-            }
-            return arr.ToArray();
-        }
-        
-        public static void AddToTree(int[] nums,  aBSTHelper tree, int start, int end)
-        {
-            if (start > end) return;
-
-            int middle = (start + end) / 2;
-
-            tree.AddKey(nums[middle]);
-            AddToTree(nums, tree, start, middle - 1);
-            AddToTree(nums, tree, middle + 1, end);
-        }
-
-        public static int CheckDepth(int size)
-        {
-            int depth = 0;
-            while (true)
-            {
-
-                if ((int)Math.Pow(2, (Convert.ToDouble(depth + 1))) - 1 >= size && size <= (int)Math.Pow(2, (Convert.ToDouble(depth + 2))) - 1)
-                {
-                    return depth;
-                }
-                depth++;
-            }
+            NodeKey = key;
+            Parent = parent;
+            LeftChild = null;
+            RightChild = null;
         }
     }
-    public class aBSTHelper
+    public class BalancedBST
     {
-        public int?[] Tree; // массив ключей
-        int tree_size;
-        public aBSTHelper(int depth)
+        public BSTNode Root;
+
+        public int[] BSTArray; // временный массив для ключей дерева
+
+        public BalancedBST()
         {
-            // правильно рассчитайте размер массива для дерева глубины depth:
-            tree_size = (int)Math.Pow(2, (Convert.ToDouble(depth + 1))) - 1;
-            Tree = new int?[tree_size];
-            for (int i = 0; i < tree_size; i++) Tree[i] = null;
+            Root = null;
         }
 
-        public int? FindKeyIndex(int key)
+        public void CreateFromArray(int[] a)
         {
-            // ищем в массиве индекс ключа
-            int i = 0;
-            for (; i < tree_size;)
-            {
-                if (Tree[i] != null)
-                {
-                    if (Tree[i] == key) return i;
-                    else
-                    {
-                        i = Tree[i] > key ? (2 * i) + 1 : (2 * i) + 2; // If greater, go left, Else go right
-                    }
-                }
-                else
-                {
-                    return -i;
-                }
-
-            }
-            return null; // не найден
+            BSTArray = new int[a.Length];   
+            Array.Sort(a);                  
+            AddToArray(a, 0);
         }
 
-        public int AddKey(int key)
+        public void GenerateTree()
         {
-            // добавляем ключ в массив
-            int? found = this.FindKeyIndex(key);
-            if (found <= 0)
+            Root = AddNode(null, 0); 
+        }
+
+        public bool IsBalanced(BSTNode root_node)
+        {
+            BSTNode node = root_node;
+
+            if (node != null)
             {
-                Tree[(int)-found] = key;
-                return (int)-found;
+                int LeftLevel = node.Level;
+                int RightLevel = node.Level;
+
+                if (node.LeftChild != null)
+                    LeftLevel = MaxLevel(node.LeftChild);
+
+                if (node.RightChild != null)
+                    RightLevel = MaxLevel(node.RightChild);
+
+                if (Math.Abs(LeftLevel - RightLevel) > 1) return false;
             }
-            else if (found > 0)
+
+            return true;
+        }
+
+        private void AddToArray(int[] arr, int index)
+        {
+            int middle = arr.Length / 2;        
+            BSTArray[index] = arr[middle];     
+
+            if (arr.Length == 1) return;        
+
+            int[] left = new int[middle];       
+            int[] right = new int[middle];      
+
+            for (int i = 0; i < middle; i++)
             {
-                return (int)found;
+                left[i] = arr[i];               
+                right[i] = arr[middle + i + 1]; 
             }
-            return -1;
-            // индекс добавленного/существующего ключа или -1 если не удалось
+
+            AddToArray(left, 2 * index + 1);    
+            AddToArray(right, 2 * index + 2);   
+
+        }
+
+        private BSTNode AddNode(BSTNode parent, int index)
+        {
+            if (index >= BSTArray.Length) return null; 
+
+            BSTNode node = new BSTNode(BSTArray[index], parent); 
+            node.Parent = parent;
+            if (parent == null) node.Level = 1;
+            else node.Level = parent.Level + 1;
+
+            node.LeftChild = AddNode(node, 2 * index + 1);
+            if (node.LeftChild != null)
+            {
+                node.LeftChild.Level = node.LeftChild.Parent.Level + 1;
+            }
+
+            node.RightChild = AddNode(node, 2 * index + 2);
+            if (node.RightChild != null)
+            {
+                node.RightChild.Level = node.RightChild.Parent.Level + 1;
+            }
+
+            return node;
+        }
+
+        private int MaxLevel(BSTNode FromNode)
+        {
+            BSTNode node = FromNode;
+            int maxLevel = node.Level;
+
+            if (node != null)
+            {
+                int leftLevel = node.Level;
+                int rightLevel = node.Level;
+
+                if (node.LeftChild != null)
+                    leftLevel = MaxLevel(node.LeftChild);
+
+                if (node.RightChild != null)
+                    rightLevel = MaxLevel(node.RightChild);
+
+                maxLevel = leftLevel > rightLevel ? leftLevel : rightLevel;
+            }
+
+            return maxLevel;
         }
 
     }

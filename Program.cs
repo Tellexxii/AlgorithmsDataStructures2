@@ -10,7 +10,7 @@ namespace AlgorithmsDataStructures2
     {
         static void Main(string[] args)
         {
-            Console.WriteLine("Hello World!");
+            Tests.BalancedTree();
             Console.ReadKey();
         }
     }
