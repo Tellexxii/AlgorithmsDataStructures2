@@ -216,16 +216,9 @@ namespace AlgorithmsDataStructures2
             SimpleTreeNode<T> node = targetNode;
             var result = new List<SimpleTreeNode<T>> { node };
 
-            if (isFind)
-            {
-                result = new List<SimpleTreeNode<T>>();
-                if (node.NodeValue.Equals(val))
-                    result.Add(node);
-            }
-
             for (int i = 0; node.Children != null && i < node.Children.Count; i++)
             {
-                result.AddRange(isFind ? Recursive(node.Children[i], val, true) : Recursive(node.Children[i]));
+                result.AddRange(Recursive(node.Children[i]));
             }
 
             return result;
