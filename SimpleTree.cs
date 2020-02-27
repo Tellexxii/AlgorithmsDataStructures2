@@ -162,29 +162,6 @@ namespace AlgorithmsDataStructures2
 
         public int LeafCount()
         {
-            //SimpleTreeNode<T> current = Root;
-            //Stack<SimpleTreeNode<T>> stack = new Stack<SimpleTreeNode<T>>();
-            //int leafs = 0;
-            //stack.Push(current);
-            
-            //while (current != null && stack.Count != 0)
-            //{
-            //    if (current.Children != null)
-            //    {
-            //        List<SimpleTreeNode<T>> children = current.Children;
-            //        foreach (var child in children)
-            //        {
-            //            stack.Push(child);
-            //        }
-            //    }
-            //    else
-            //    {
-            //        leafs++;
-            //    }
-            //    current = stack.Pop();
-            //}
-
-            //return leafs;
             List<SimpleTreeNode<T>> list = this.GetAllNodes();
             int leafs = 0;
             foreach (var node in list)
@@ -194,7 +171,65 @@ namespace AlgorithmsDataStructures2
 
             return leafs;
         }
+        public List<int> EvenTrees()
+        {
+            if (Count() % 2 == 1) return new List<int>();
+            
+            List<SimpleTreeNode<T>> leafs = Recursive(Root).FindAll(
+                node => node.Children == null || node.Children.Count == 0);
 
+            List<int> edges = new List<int>();
+            SimpleTreeNode<T> previousLeafParrent = null;
+            foreach (var leaf in leafs)
+            {
+                if (previousLeafParrent != leaf.Parent)
+                {
+                    SimpleTreeNode<T> node = leaf.Parent;
+                    while (node != Root)
+                    {
+                        int nodesCount = Recursive(node).Count;
+                        if (nodesCount % 2 == 0)
+                        {
+                            if (typeof(T) == typeof(int))
+                            {
+                                if (!edges.Contains(Convert.ToInt32(node.Parent.NodeValue)) ||
+                                    !edges.Contains(Convert.ToInt32(node.NodeValue)))
+                                {
+                                    edges.Add(Convert.ToInt32(node.Parent.NodeValue));
+                                    edges.Add(Convert.ToInt32(node.NodeValue));
+                                }
+                            }
+                        }
+
+                        node = node.Parent;
+                    }
+                }
+
+                previousLeafParrent = leaf.Parent;
+            }
+
+            return edges;
+        }
+
+        private List<SimpleTreeNode<T>> Recursive(SimpleTreeNode<T> targetNode, T val = default(T), bool isFind = false)
+        {
+            SimpleTreeNode<T> node = targetNode;
+            var result = new List<SimpleTreeNode<T>> { node };
+
+            if (isFind)
+            {
+                result = new List<SimpleTreeNode<T>>();
+                if (node.NodeValue.Equals(val))
+                    result.Add(node);
+            }
+
+            for (int i = 0; node.Children != null && i < node.Children.Count; i++)
+            {
+                result.AddRange(isFind ? Recursive(node.Children[i], val, true) : Recursive(node.Children[i]));
+            }
+
+            return result;
+        }
     }
 
 }

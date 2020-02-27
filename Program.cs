@@ -10,8 +10,6 @@ namespace AlgorithmsDataStructures2
     {
         static void Main(string[] args)
         {
-            Tests.BalancedTree();
-            Console.ReadKey();
         }
     }
 }
