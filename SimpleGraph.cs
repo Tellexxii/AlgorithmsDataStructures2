@@ -121,5 +121,73 @@ namespace AlgorithmsDataStructures2
                 }
             }
         }
+
+        public List<Vertex<T>> BreadthFirstSearch(int VFrom, int VTo)
+        {
+            // узлы задаются позициями в списке vertex.
+            // возвращает список узлов -- путь из VFrom в VTo
+            // или пустой список, если пути нету
+            List<Vertex<T>> path = new List<Vertex<T>>();
+            List<Vertex<T>> adjVertex = new List<Vertex<T>>();
+            Queue<Vertex<T>> adjVQueue = new Queue<Vertex<T>>();
+            
+            vertex.ToList().ForEach(x => x.Hit = false);
+
+            Vertex<T> currentVertex = vertex[VFrom];
+            currentVertex.Hit = true;
+            path.Add(currentVertex);
+
+            while (true)
+            {
+                adjVertex.Clear();
+                adjVertex.AddRange(Array.FindAll(vertex, (item) =>
+                    !item.Hit &&
+                    item != currentVertex &&
+                    IsEdge(Array.IndexOf(vertex, currentVertex), Array.IndexOf(vertex, item))));
+
+                if (adjVertex.Count == 0)
+                {
+                    if (adjVQueue.Count == 0)
+                    {
+                        path.Clear();
+                        return path;
+                    }
+
+                    currentVertex = adjVQueue.Dequeue();
+                    path.Add(currentVertex);
+                }
+                else
+                {
+                    if (adjVertex[0] == vertex[VTo])
+                    {
+                        path.Add(adjVertex[0]);
+                        Vertex<T> lastVertex = path[path.Count - 1];
+                        List<Vertex<T>> tempList = new List<Vertex<T>> { lastVertex };
+
+                        int currentIndex = path.Count - 1;
+                        int startIndex = 0;
+                        while (currentIndex > startIndex)
+                        {
+                            if (IsEdge(Array.IndexOf(vertex, path[currentIndex]), Array.IndexOf(vertex, path[startIndex])))
+                            {
+                                tempList.Add(path[startIndex]);
+                                currentIndex = startIndex;
+                                startIndex = 0;
+                            }
+                            else
+                                ++startIndex;
+                        }
+
+                        tempList.Reverse();
+                        path = tempList;
+
+                        return path;
+                    }
+
+                    adjVertex[0].Hit = true;
+                    adjVQueue.Enqueue(adjVertex[0]);
+                }
+            }
+        }
     }
 }
