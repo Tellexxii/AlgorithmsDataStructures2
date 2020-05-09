@@ -130,8 +130,8 @@ namespace AlgorithmsDataStructures2
             List<Vertex<T>> path = new List<Vertex<T>>();
             List<Vertex<T>> adjVertex = new List<Vertex<T>>();
             Queue<Vertex<T>> adjVQueue = new Queue<Vertex<T>>();
-            
-            vertex.ToList().ForEach(x => x.Hit = false);
+
+            foreach (var item in vertex) { item.Hit = false; }
 
             Vertex<T> currentVertex = vertex[VFrom];
             currentVertex.Hit = true;
