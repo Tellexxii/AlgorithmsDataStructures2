@@ -91,28 +91,33 @@ namespace AlgorithmsDataStructures2
 
         public bool AddKeyValue(int key, T val)
         {
-            // добавляем ключ-значение в дерево, если корень не null
-            if (Root != null)
-            {
-                BSTFind<T> foundNode = FindNodeByKey(key);
-
-                if (!foundNode.NodeHasKey)
-                {
-                    if (foundNode.ToLeft)
-                        foundNode.Node.LeftChild = new BSTNode<T>(key, val, foundNode.Node);
-                    else
-                        foundNode.Node.RightChild = new BSTNode<T>(key, val, foundNode.Node);
-
-                    return true;
-                }
-            }
-            else
+            if (Root == null)
             {
                 Root = new BSTNode<T>(key, val, null);
             }
-
-            return false;
+            else
+            {
+                BSTFind<T> foundNode = FindNodeByKey(key);
+                if (foundNode.NodeHasKey == false)
+                {
+                    BSTNode<T> newNode = new BSTNode<T>(key, val, foundNode.Node);
+                    if (foundNode.ToLeft)
+                    {
+                        foundNode.Node.LeftChild = newNode;
+                        newNode.Parent = foundNode.Node;
+                    }
+                    else
+                    {
+                        foundNode.Node.RightChild = newNode;
+                        newNode.Parent = foundNode.Node;
+                    }
+                }
+                else
+                    return false;
+            }
+            return true;
         }
+
 
         public BSTNode<T> FinMinMax(BSTNode<T> FromNode, bool FindMax)
         {
@@ -141,7 +146,7 @@ namespace AlgorithmsDataStructures2
             BSTNode<T> successorNode;
 
 
-            if (foundNode.NodeHasKey == true)
+            if (foundNode.NodeHasKey)
             {
                 if (Node.LeftChild != null && Node.RightChild != null)
                 {
