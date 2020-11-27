@@ -297,6 +297,77 @@ namespace AlgorithmsDataStructures2
 
             return count;
         }
+        
+        public List<BSTNode<T>> WideAllNodes()
+        {
+            List<BSTNode<T>> WideList = new List<BSTNode<T>>();
+            Queue<BSTNode<T>> NodesQueue = new Queue<BSTNode<T>>();
+            BSTNode<T> Node = Root;
+            NodesQueue.Enqueue(Root);
+
+            if (Root != null)
+            {
+                while (NodesQueue.Count > 0)
+                {
+                    Node = NodesQueue.Dequeue();
+                    WideList.Add(Node);
+
+                    if (Node.LeftChild != null)
+                        NodesQueue.Enqueue(Node.LeftChild);
+                    if (Node.RightChild != null)
+                        NodesQueue.Enqueue(Node.RightChild);
+                }
+                return WideList;
+            }
+            return null;
+        }
+
+        public List<BSTNode<T>> DeepAllNodes(int Order)
+        {
+            return DeepTraversing(Root, Order);
+        }
+
+        public List<BSTNode<T>> DeepTraversing(BSTNode<T> fromNode, int Order)
+        {
+            List<BSTNode<T>> DeepList = new List<BSTNode<T>>();
+            BSTNode<T> Node = fromNode;
+
+            if (Node != null)
+            {
+                switch (Order)
+                {
+                    case 0: // in-order
+                        {
+                            DeepList.AddRange(DeepTraversing(Node.LeftChild, Order));
+                            DeepList.Add(Node);
+                            DeepList.AddRange(DeepTraversing(Node.RightChild, Order));
+
+                            break;
+                        }
+
+                    case 1: // post-order
+                        {
+                            DeepList.AddRange(DeepTraversing(Node.LeftChild, Order));
+                            DeepList.AddRange(DeepTraversing(Node.RightChild, Order));
+                            DeepList.Add(Node);
+
+                            break;
+                        }
+
+                    case 2: // pre-order
+                        {
+                            DeepList.Add(Node);
+                            DeepList.AddRange(DeepTraversing(Node.LeftChild, Order));
+                            DeepList.AddRange(DeepTraversing(Node.RightChild, Order));
+                            break;
+                        }
+
+                    default:
+                        return null;
+                }
+            }
+            return DeepList;
+        }
     }
 
 }
